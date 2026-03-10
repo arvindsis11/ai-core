@@ -1,18 +1,119 @@
 server:
   port: 8080
+  servlet:
+    context-path: /api
+  shutdown: graceful
+  error:
+    include-message: always
+    include-binding-errors: always
 
 spring:
   application:
     name: ai-core
+    version: 1.0.0
 
-openai:
-  api:
-    key: ${OPENAI_API_KEY}
+  # JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+        jdbc:
+          batch_size: 20
+          fetch_size: 50
+        order_inserts: true
+        order_updates: true
+
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:testdb;MODE=PostgreSQL
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 20000
+      idle-timeout: 300000
+
+  # Redis Configuration
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+
+  # Security Configuration
+  security:
+    user:
+      name: admin
+      password: admin123
+
+# AI Configuration
+ai:
+  openAi:
+    apiKey: ${OPENAI_API_KEY:sk-test-key}
     url: https://api.openai.com/v1/chat/completions
     model: gpt-4o-mini
+    timeoutSeconds: 30
+    maxTokens: 2000
+    temperature: 0.7
 
+  rateLimit:
+    enabled: true
+    requestsPerMinute: 60
+    requestsPerHour: 1000
+
+  cache:
+    enabled: true
+    ttlMinutes: 60
+    maxSize: 1000
+
+# Logging Configuration
 logging:
   level:
     root: INFO
+    com.arvind.ai_core: DEBUG
     org.springframework.web: INFO
-    org.springframework.web.client.RestTemplate: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/ai-core.log
+    max-size: 10MB
+    max-history: 10
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+      base-path: /actuator
+  endpoint:
+    health:
+      show-details: always
+  metrics:
+    export:
+      prometheus:
+        enabled: true
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method

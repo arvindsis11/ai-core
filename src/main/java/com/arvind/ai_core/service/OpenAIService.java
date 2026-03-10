@@ -1,54 +1,34 @@
 package com.arvind.ai_core.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.arvind.ai_core.common.exception.AiProviderException;
+import com.arvind.ai_core.service.ai.openai.OpenAIProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.*;
-
+/**
+ * Service for interacting with OpenAI API.
+ * Handles all OpenAI-related operations and error handling.
+ *
+ * This service acts as a facade to the OpenAIProvider implementation,
+ * maintaining backward compatibility while leveraging the new provider architecture.
+ */
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class OpenAIService {
 
-    @Value("${openai.api.key}")
-    private String apiKey;
+    private final OpenAIProvider openAIProvider;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
+    /**
+     * Ask a question to the OpenAI API.
+     *
+     * @param question The question to ask
+     * @return The AI response
+     * @throws AiProviderException if the API call fails
+     */
     public String askAI(String question) {
-
-        String url = "https://api.openai.com/v1/chat/completions";
-
-        Map<String, Object> body = new HashMap<>();
-        body.put("model", "gpt-4o-mini");
-
-        List<Map<String, String>> messages = new ArrayList<>();
-
-        Map<String, String> msg = new HashMap<>();
-        msg.put("role", "user");
-        msg.put("content", question);
-
-        messages.add(msg);
-
-        body.put("messages", messages);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.setBearerAuth(apiKey);
-
-        HttpEntity<Map<String, Object>> request =
-                new HttpEntity<>(body, headers);
-
-        ResponseEntity<Map> response =
-                restTemplate.exchange(url, HttpMethod.POST, request, Map.class);
-
-        List choices = (List) response.getBody().get("choices");
-        Map firstChoice = (Map) choices.get(0);
-        Map message = (Map) firstChoice.get("message");
-
-        return message.get("content").toString();
+        log.info("Processing AI question via OpenAIService");
+        return openAIProvider.chat(question);
     }
 }

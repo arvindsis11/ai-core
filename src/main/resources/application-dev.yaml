@@ -1,0 +1,70 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: ai-core
+
+  # JPA/Hibernate Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+
+  # Database Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/ai_core_dev
+    driver-class-name: org.postgresql.Driver
+    username: postgres
+    password: postgres
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  # Redis Configuration (disabled for local dev)
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+
+# AI Configuration
+ai:
+  openAi:
+    apiKey: ${OPENAI_API_KEY:sk-test-key}
+    url: https://api.openai.com/v1/chat/completions
+    model: gpt-4o-mini
+    timeoutSeconds: 30
+
+  rateLimit:
+    enabled: true
+    requestsPerMinute: 60
+
+  cache:
+    enabled: true
+    ttlMinutes: 60
+
+# Logging Configuration
+logging:
+  level:
+    root: INFO
+    com.arvind.ai_core: DEBUG
+    org.springframework.security: DEBUG
+  file:
+    name: logs/ai-core.log
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always

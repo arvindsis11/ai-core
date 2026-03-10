@@ -51,16 +51,9 @@ spring:
           max-idle: 8
           min-idle: 0
 
-  # Security Configuration
-  security:
-    user:
-      name: admin
-      password: admin123
-
-# AI Configuration
-ai:
-  openAi:
-    apiKey: ${OPENAI_API_KEY:sk-test-key}
+openai:
+  api:
+    key: ${OPENAI_API_KEY}
     url: https://api.openai.com/v1/chat/completions
     model: gpt-4o-mini
     timeoutSeconds: 30

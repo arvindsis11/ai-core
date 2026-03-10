@@ -71,9 +71,10 @@ jobs:
           git config --global user.name "github-actions[bot]"
 
       - name: Publish to GitHub Packages
-        run: mvn deploy -DskipTests
+        run: mvn clean deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_ACTOR: ${{ github.actor }}
 
       - name: Create Release Notes
         if: github.event_name == 'release'

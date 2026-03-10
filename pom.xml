@@ -32,17 +32,17 @@
 		<github.repository>arvind-sisodiya/ai-core</github.repository>
 	</properties>
 
-	<!-- Repository Configuration -->
+	<!-- Repository Configuration for GitHub Packages -->
 	<distributionManagement>
 		<repository>
 			<id>github</id>
 			<name>GitHub Packages</name>
-			<url>https://maven.pkg.github.com/${github.repository}</url>
+			<url>https://maven.pkg.github.com/arvind-sisodiya/ai-core</url>
 		</repository>
 		<snapshotRepository>
 			<id>github</id>
 			<name>GitHub Packages Snapshot</name>
-			<url>https://maven.pkg.github.com/${github.repository}</url>
+			<url>https://maven.pkg.github.com/arvind-sisodiya/ai-core</url>
 		</snapshotRepository>
 	</distributionManagement>
 	<dependencies>
